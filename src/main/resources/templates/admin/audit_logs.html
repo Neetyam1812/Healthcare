@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin_layout :: adminHead('Audit Log')}">
+  <title>Audit Log | FamilyCare Admin</title>
+</head>
+
+<body>
+  <th:block th:replace="~{fragments/admin_layout :: shell('System audit log', 'audit', ~{::#admin-audit-body})}">
+    <div id="admin-audit-body">
+
+      <!-- Filter Bar -->
+      <form th:action="@{/admin/audit}" method="get" class="filter-bar" role="search">
+        <div class="filter-group">
+          <!-- Action Dropdown -->
+          <select name="action" class="form-select">
+            <option value="" th:selected="${selectedAction == ''}">All administrative actions</option>
+            <option value="LOGIN" th:selected="${selectedAction == 'LOGIN'}">LOGIN</option>
+            <option value="LOGIN_FAILED" th:selected="${selectedAction == 'LOGIN_FAILED'}">LOGIN_FAILED</option>
+            <option value="LOGOUT" th:selected="${selectedAction == 'LOGOUT'}">LOGOUT</option>
+            <option value="REGISTER" th:selected="${selectedAction == 'REGISTER'}">REGISTER</option>
+            <option value="PASSWORD_RESET_REQUEST" th:selected="${selectedAction == 'PASSWORD_RESET_REQUEST'}">PASSWORD_RESET_REQUEST</option>
+            <option value="PASSWORD_RESET_SUCCESS" th:selected="${selectedAction == 'PASSWORD_RESET_SUCCESS'}">PASSWORD_RESET_SUCCESS</option>
+            <option value="USER_SUSPENDED" th:selected="${selectedAction == 'USER_SUSPENDED'}">USER_SUSPENDED</option>
+            <option value="USER_ACTIVATED" th:selected="${selectedAction == 'USER_ACTIVATED'}">USER_ACTIVATED</option>
+            <option value="SOS_ACKNOWLEDGED" th:selected="${selectedAction == 'SOS_ACKNOWLEDGED'}">SOS_ACKNOWLEDGED</option>
+          </select>
+
+          <!-- Start Date -->
+          <input type="date" name="startDate" th:value="${startDate}" class="form-input" aria-label="Start date">
+
+          <!-- End Date -->
+          <input type="date" name="endDate" th:value="${endDate}" class="form-input" aria-label="End date">
+        </div>
+
+        <div class="filter-group">
+          <button type="submit" class="btn-sm btn-sm-primary">Filter logs</button>
+          <a th:href="@{/admin/audit}" class="btn-sm">Reset</a>
+
+          <!-- Export CSV button (SUPER_ADMIN only) -->
+          <a th:href="@{/admin/audit/export}" class="btn-sm" sec:authorize="hasRole('SUPER_ADMIN')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export CSV</span>
+          </a>
+        </div>
+      </form>
+
+      <!-- Audit Log Table Card -->
+      <div class="admin-card">
+        <div class="admin-table-container">
+          <table class="admin-table" aria-label="Audit Events Table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Actor</th>
+                <th>Action</th>
+                <th>Target</th>
+                <th>Details</th>
+                <th>IP address</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#lists.isEmpty(auditPage.content)}">
+                <td colspan="6" style="text-align: center; color: var(--muted); padding: 30px;">
+                  No audit log records found for the specified filters.
+                </td>
+              </tr>
+              <tr th:each="log : ${auditPage.content}">
+                <td th:text="${log.createdAtFormatted}" style="white-space: nowrap; color: var(--muted);">Timestamp</td>
+                <td style="font-weight: 500;" th:text="${log.actorEmail != null ? log.actorEmail : 'SYSTEM'}">Actor</td>
+                <td>
+                  <span class="badge"
+                        th:classappend="${log.action == 'USER_SUSPENDED' ? 'badge-suspended' : (log.action == 'USER_ACTIVATED' ? 'badge-active' : 'badge-role')}"
+                        th:text="${log.action}">ACTION</span>
+                </td>
+                <td style="color: var(--muted);" th:text="${(log.targetType != null ? log.targetType : '—') + (log.targetId != null ? ' #' + log.targetId : '')}">Target</td>
+                <td th:text="${log.detail != null ? log.detail : '—'}">Details</td>
+                <td style="font-family: monospace; font-size: 0.76rem; color: var(--muted);" th:text="${log.ip != null ? log.ip : '—'}">127.0.0.1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper" th:if="${totalPages > 1}">
+          <div style="font-size: 0.78rem; color: var(--muted);">
+            Showing page <span style="font-weight: 700; color: var(--heading);" th:text="${currentPage + 1}">1</span>
+            of <span style="font-weight: 700; color: var(--heading);" th:text="${totalPages}">1</span>
+          </div>
+          <div class="pagination-links">
+            <a th:href="@{/admin/audit(action=${selectedAction}, startDate=${startDate}, endDate=${endDate}, page=${currentPage - 1})}"
+               class="page-btn" th:classappend="${currentPage == 0} ? 'disabled' : ''">&larr; Previous</a>
+
+            <th:block th:each="p : ${#numbers.sequence(0, totalPages - 1)}">
+              <a th:if="${p >= currentPage - 2 && p <= currentPage + 2}"
+                 th:href="@{/admin/audit(action=${selectedAction}, startDate=${startDate}, endDate=${endDate}, page=${p})}"
+                 class="page-btn" th:classappend="${p == currentPage} ? 'active' : ''"
+                 th:text="${p + 1}">1</a>
+            </th:block>
+
+            <a th:href="@{/admin/audit(action=${selectedAction}, startDate=${startDate}, endDate=${endDate}, page=${currentPage + 1})}"
+               class="page-btn" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled' : ''">Next &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </th:block>
+</body>
+</html>

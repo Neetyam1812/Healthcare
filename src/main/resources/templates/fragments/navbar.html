@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <!-- Header & Sticky Navbar Fragment -->
+  <header class="navbar" th:fragment="navbar">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="container">
+      <div class="navbar-inner">
+        <!-- Brand Logo (Shield with Heart) + Name -->
+        <a th:href="@{/}" class="brand-link" aria-label="FamilyCare home">
+          <span class="card-icon brand-icon" aria-hidden="true">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="M12 8.2c-.7-.8-1.8-1-2.7-.4-1.1.8-1.1 2.4 0 3.5l2.7 2.7 2.7-2.7c1.1-1.1 1.1-2.7 0-3.5-.9-.6-2-.4-2.7.4z" fill="currentColor"></path>
+            </svg>
+          </span>
+          <span class="brand-text">FamilyCare</span>
+        </a>
+
+        <!-- Navigation Links -->
+        <nav aria-label="Main navigation">
+          <ul class="nav-links" role="list">
+            <li><a href="#features" class="nav-link">Features</a></li>
+            <li><a href="#how" class="nav-link">How it works</a></li>
+            <li><a href="#safety" class="nav-link">Safety</a></li>
+            <li><a href="#faq" class="nav-link">FAQ</a></li>
+          </ul>
+        </nav>
+
+        <!-- Right Controls: Theme Toggle + Log In + Sign Up -->
+        <div class="nav-actions row" style="gap: var(--space-12);">
+          <!-- Theme Toggle Button -->
+          <button type="button" class="btn btn-icon btn-ghost theme-toggle-btn" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+
+          <!-- Clean Login and Sign Up Actions -->
+          <div class="auth-buttons row" style="gap: var(--space-8);">
+            <a th:href="@{/login}" class="btn btn-ghost nav-btn-login">Log in</a>
+            <a th:href="@{/register}" class="btn btn-primary nav-btn-signup">Sign up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+</body>
+</html>

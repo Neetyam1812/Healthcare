@@ -1,0 +1,528 @@
+/* ==========================================================================
+   FamilyCare - Home Page Styles (home.css)
+   Warm Clinical Calm Design Theme (Organic Healthcare & Modern Editorial)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Hero Section with Warm Aurora Glow Mesh
+   -------------------------------------------------------------------------- */
+.section.aurora {
+  position: relative;
+  overflow: hidden;
+  padding-top: calc(var(--space-80) + 16px);
+  padding-bottom: calc(var(--space-80) + 24px);
+  background-color: var(--bg);
+}
+
+.section.aurora::before,
+.section.aurora::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+  animation: warmAuroraDrift 16s ease-in-out infinite alternate;
+}
+
+.section.aurora::before {
+  top: -10%;
+  left: -8%;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.18) 0%, rgba(147, 51, 234, 0.03) 50%, transparent 70%);
+}
+
+.section.aurora::after {
+  bottom: -5%;
+  right: -6%;
+  width: 540px;
+  height: 540px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, rgba(229, 222, 255, 0.06) 50%, transparent 70%);
+  animation-duration: 20s;
+  animation-delay: -8s;
+}
+
+[data-theme="dark"] .section.aurora::before {
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.28) 0%, transparent 70%);
+  opacity: 0.85;
+}
+
+[data-theme="dark"] .section.aurora::after {
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 70%);
+  opacity: 0.85;
+}
+
+@keyframes warmAuroraDrift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(35px, 20px) scale(1.08); }
+  100% { transform: translate(-25px, 40px) scale(0.95); }
+}
+
+#hero-heading {
+  font-size: var(--h1-size);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  color: var(--heading);
+}
+
+.highlight-text {
+  color: var(--primary) !important;
+}
+
+.store-badge-btn {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--heading) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease,
+              box-shadow 0.25s ease,
+              background-color 0.25s ease !important;
+}
+
+.store-badge-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary) !important;
+  box-shadow: 0 4px 14px rgba(194, 85, 47, 0.16);
+  background-color: var(--surface-2) !important;
+  color: var(--primary) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Hero Mock Dashboard Preview & Floating Card
+   -------------------------------------------------------------------------- */
+.hero-mock-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Warm Ambient Glow Behind Mock Dashboard */
+.hero-mock-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -25px;
+  right: -25px;
+  bottom: -25px;
+  left: -25px;
+  background: radial-gradient(circle at 60% 40%, rgba(194, 85, 47, 0.16) 0%, rgba(45, 90, 60, 0.08) 50%, transparent 72%);
+  border-radius: var(--radius-xl);
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(20px);
+  animation: warmPulseAura 6s ease-in-out infinite alternate;
+}
+
+@keyframes warmPulseAura {
+  0% { opacity: 0.6; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1.02); }
+}
+
+.hero-mock-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+  border-radius: var(--radius-xl);
+  padding: var(--space-24) var(--space-32);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+[data-theme="dark"] .hero-mock-card {
+  border-color: var(--border);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.65), 0 0 35px rgba(224, 117, 82, 0.12);
+}
+
+.hero-mock-card .stat-value {
+  color: var(--primary);
+  font-size: 2.25rem;
+}
+
+/* Progress Bar with Warm Shimmer */
+.hero-mock-card .progress-bar {
+  background: var(--hero-grad);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 0 10px rgba(194, 85, 47, 0.35);
+}
+
+/* Urgent / Actionable Card: Upcoming Medication Dose */
+.card-urgent {
+  padding: var(--space-12) var(--space-16);
+  background: linear-gradient(135deg, rgba(194, 85, 47, 0.05) 0%, var(--surface) 100%) !important;
+  border: 1px solid rgba(194, 85, 47, 0.35) !important;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(194, 85, 47, 0.08) !important;
+  transition: all var(--transition);
+}
+
+.card-urgent:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary) !important;
+  box-shadow: 0 6px 18px rgba(194, 85, 47, 0.18) !important;
+}
+
+.card-urgent .card-icon {
+  background: rgba(194, 85, 47, 0.12) !important;
+  color: var(--primary) !important;
+  border: 1px solid rgba(194, 85, 47, 0.25) !important;
+}
+
+/* Vitals Mini Row & Item Hover */
+.hero-vitals-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-12);
+}
+
+.hero-vital-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: var(--shadow-xs);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+.hero-vital-item:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--primary);
+  box-shadow: 0 8px 20px -4px rgba(194, 85, 47, 0.15);
+}
+
+.hero-vital-item span:nth-child(2) {
+  font-size: 1.125rem !important;
+  letter-spacing: -0.02em;
+  color: var(--heading);
+}
+
+/* Floating Notification Card */
+@keyframes floatWarmCard {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+.floating-dose-card {
+  position: absolute;
+  bottom: -18px;
+  right: -14px;
+  padding: 14px 22px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(45, 90, 60, 0.3);
+  box-shadow: 0 20px 40px -8px rgba(30, 43, 34, 0.15), 0 4px 12px rgba(30, 43, 34, 0.05);
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: floatWarmCard 4.5s ease-in-out infinite;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-dose-card:hover {
+  border-color: var(--success);
+  box-shadow: 0 24px 48px -8px rgba(45, 90, 60, 0.22);
+}
+
+[data-theme="dark"] .floating-dose-card {
+  background: var(--surface);
+  border-color: rgba(114, 168, 130, 0.35);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.7), 0 0 22px rgba(114, 168, 130, 0.15);
+}
+
+@media (max-width: 640px) {
+  .hero-vitals-row {
+    grid-template-columns: 1fr;
+  }
+  .floating-dose-card {
+    position: static;
+    margin-top: var(--space-16);
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-dose-card,
+  .section.aurora::before,
+  .section.aurora::after,
+  .hero-mock-wrapper::before {
+    animation: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Feature Cards Grid (8 Cards with Soft Warm Border)
+   -------------------------------------------------------------------------- */
+#features {
+  background-color: var(--bg);
+}
+
+#features .card-interactive {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-32) var(--space-24);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+#features .card-interactive::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(194, 85, 47, 0.5), transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+[data-theme="dark"] #features .card-interactive::before {
+  background: linear-gradient(90deg, transparent, rgba(224, 117, 82, 0.6), transparent);
+}
+
+#features .card-interactive:hover {
+  transform: translateY(-8px) scale(1.01);
+  border-color: rgba(194, 85, 47, 0.38);
+  box-shadow: var(--shadow-hover);
+}
+
+#features .card-interactive:hover::before {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   How It Works (Connecting Line & Animated Step Badges)
+   -------------------------------------------------------------------------- */
+#how {
+  background-color: var(--surface-2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.steps-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-32);
+}
+
+@media (min-width: 768px) {
+  .steps-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-32);
+  }
+
+  .steps-row::before {
+    content: '';
+    position: absolute;
+    top: 52px;
+    left: 16%;
+    right: 16%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--surface-3) 50%, var(--secondary) 100%);
+    opacity: 0.6;
+    box-shadow: 0 0 12px var(--primary-glow);
+    z-index: 1;
+  }
+}
+
+.step-item {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-16);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-32) var(--space-24);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s ease;
+  overflow: hidden;
+}
+
+.step-item:hover {
+  transform: translateY(-6px);
+  border-color: rgba(194, 85, 47, 0.38);
+  box-shadow: var(--shadow-hover);
+}
+
+.step-badge {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--hero-grad);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  font-weight: 800;
+  box-shadow: 0 0 0 6px var(--fill-muted), 0 4px 14px rgba(194, 85, 47, 0.32);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  position: relative;
+}
+
+.step-item:hover .step-badge {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 8px var(--fill-muted), 0 6px 20px rgba(194, 85, 47, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   Role Cards (Section: Who it's for)
+   -------------------------------------------------------------------------- */
+.role-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  height: 100%;
+  padding: var(--space-32) var(--space-24);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(194, 85, 47, 0.38);
+  box-shadow: var(--shadow-hover);
+}
+
+/* --------------------------------------------------------------------------
+   FAQ Accordion (Accessible Button + Panel with Accent Highlights)
+   -------------------------------------------------------------------------- */
+.faq-accordion {
+  max-width: 820px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.faq-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.faq-card:hover {
+  border-color: rgba(194, 85, 47, 0.35);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.faq-trigger {
+  width: 100%;
+  padding: var(--space-20) var(--space-24);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--heading);
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.faq-trigger:hover {
+  color: var(--primary);
+}
+
+.faq-chevron {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.faq-trigger[aria-expanded="true"] {
+  color: var(--primary);
+}
+
+.faq-trigger[aria-expanded="true"] .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-panel {
+  padding: 0 var(--space-24) var(--space-24) var(--space-24);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--muted);
+  animation: fadeInPanel 0.3s ease;
+}
+
+@keyframes fadeInPanel {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.faq-panel[hidden] {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Final Call To Action Banner
+   -------------------------------------------------------------------------- */
+section[aria-labelledby="cta-heading"] .card.glass {
+  background: radial-gradient(circle at 50% 0%, rgba(194, 85, 47, 0.12) 0%, rgba(45, 90, 60, 0.05) 50%, var(--surface) 80%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] section[aria-labelledby="cta-heading"] .card.glass {
+  background: radial-gradient(circle at 50% 0%, rgba(224, 117, 82, 0.15) 0%, rgba(114, 168, 130, 0.08) 50%, var(--surface) 85%);
+  border-color: var(--border);
+}

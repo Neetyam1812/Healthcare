@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!-- Head Fragment -->
+
+<head th:replace="~{fragments/head :: head('Your whole family\'s health, in one calm place')}"></head>
+
+<body>
+  <!-- Section 1: Skip Link + Sticky Navbar Fragment -->
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+  <!-- Main Landmark -->
+  <main id="main-content">
+
+    <!-- ====================================================================
+         Section 2: Hero (class "section aurora", Two Columns)
+         ==================================================================== -->
+    <section class="section aurora" aria-labelledby="hero-heading">
+      <div class="container">
+        <div class="grid grid-2" style="align-items: center; gap: var(--space-48);">
+          <!-- Hero Left Column: Copy & Actions -->
+          <div class="stack" style="gap: var(--space-24);">
+            <h1 id="hero-heading">
+              Your whole family's health, <span class="highlight-text">in one calm place.</span>
+            </h1>
+
+            <p style="font-size: 1.125rem; line-height: 1.6; color: var(--muted); max-width: 540px;">
+              Keep medicines, appointments, health records and emergency alerts together, so everyone knows what's
+              happening and nobody misses a dose.
+            </p>
+
+            <div class="row" style="flex-wrap: wrap; gap: var(--space-16);">
+              <a th:href="@{/register}" class="btn btn-primary btn-lg">
+                <span>Create free account</span>
+                <svg class="icon-svg" style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+              <a href="#how" class="btn btn-glass btn-lg">See how it works</a>
+            </div>
+
+            <!-- Two Store-Badge Placeholders with Modern Hover Effects -->
+            <div class="row" style="flex-wrap: wrap; gap: var(--space-12); padding-top: var(--space-8);"
+              aria-label="Mobile apps">
+              <a href="#" class="btn btn-ghost store-badge-btn"
+                style="padding: var(--space-8) var(--space-16); border: 1px solid var(--border); border-radius: var(--radius-md);">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  <line x1="5" y1="3" x2="19" y2="12"></line>
+                </svg>
+                <span>Get it on Google Play</span>
+              </a>
+
+              <a href="#" class="btn btn-ghost store-badge-btn"
+                style="padding: var(--space-8) var(--space-16); border: 1px solid var(--border); border-radius: var(--radius-md);">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path
+                    d="M12 20.94c1.5 0 2.75 1.06 4 1.06 1.22 0 2.5-1.06 4-1.06 2.06 0 3.84 1.5 4.88 1.47-3.13-1.63-3.66-5.84-.75-7.72-1.34-2.03-3.47-3.34-5.69-3.34-1.84 0-3.38 1.06-4.5 1.06-1.16 0-2.88-1.06-4.62-1.06C5.97 11.35 2 14.59 2 20.12c0 3.44 1.34 6.88 3.09 9.38 1.25 1.78 2.75 3.75 4.69 3.69 1.84-.06 2.53-1.19 4.75-1.19 2.19 0 2.84 1.19 4.75 1.13 1.97-.06 3.25-1.75 4.47-3.53-1.41-.81-2.38-2.28-2.38-4 0-2.59 2.09-4.66 4.63-4.66.09 0 .19 0 .28.03-1.06-3.03-3.94-5.16-7.28-5.16z">
+                  </path>
+                </svg>
+                <span>Download on the App Store</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Hero Right Column: Mock Dashboard in card glass with reveal -->
+          <div class="hero-mock-wrapper reveal">
+            <div class="card glass hero-mock-card" aria-label="Family health overview preview">
+              <!-- Top Header: Patient & Adherence Stat -->
+              <div class="row" style="justify-content: space-between; align-items: flex-start;">
+                <div class="stack" style="gap: 4px;">
+                  <span style="font-weight: 700; font-size: 1.125rem; color: var(--text);">Daily adherence</span>
+                  <span class="muted" style="font-size: 0.8125rem;">Family medication routine</span>
+                </div>
+                <div class="stat" style="align-items: flex-end;">
+                  <span class="stat-value">86%</span>
+                  <span class="stat-label">On track</span>
+                </div>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="progress" role="progressbar" aria-valuenow="86" aria-valuemin="0" aria-valuemax="100"
+                aria-label="86% medication adherence">
+                <div class="progress-bar" style="width: 86%;"></div>
+              </div>
+
+              <!-- Next Medicine Block -->
+              <div class="card card-urgent">
+                <div class="row" style="justify-content: space-between;">
+                  <div class="row" style="gap: var(--space-12);">
+                    <div class="card-icon" style="width: 36px; height: 36px; border-radius: var(--radius-md);"
+                      aria-hidden="true">
+                      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path>
+                        <path d="m8.5 8.5 7 7"></path>
+                      </svg>
+                    </div>
+                    <div class="stack" style="gap: 2px;">
+                      <span style="font-weight: 700; font-size: 0.9375rem; color: var(--text);">Next medicine: Metformin
+                        500 mg, 8:00 PM</span>
+                      <span class="muted" style="font-size: 0.75rem;">Evening dose with meal</span>
+                    </div>
+                  </div>
+                  <span class="chip chip-info">Scheduled</span>
+                </div>
+              </div>
+
+              <!-- Row of Three Vitals with chip-success "Normal" -->
+              <div class="hero-vitals-row">
+                <!-- Vital 1: Blood pressure -->
+                <div class="hero-vital-item">
+                  <span class="muted" style="font-size: 0.75rem; font-weight: 600;">Blood pressure</span>
+                  <span style="font-size: 1rem; font-weight: 800; color: var(--text);">118/76</span>
+                  <span class="chip chip-success" style="align-self: flex-start;">Normal</span>
+                </div>
+
+                <!-- Vital 2: SpO2 -->
+                <div class="hero-vital-item">
+                  <span class="muted" style="font-size: 0.75rem; font-weight: 600;">SpO2</span>
+                  <span style="font-size: 1rem; font-weight: 800; color: var(--text);">98%</span>
+                  <span class="chip chip-success" style="align-self: flex-start;">Normal</span>
+                </div>
+
+                <!-- Vital 3: Heart rate -->
+                <div class="hero-vital-item">
+                  <span class="muted" style="font-size: 0.75rem; font-weight: 600;">Heart rate</span>
+                  <span style="font-size: 1rem; font-weight: 800; color: var(--text);">72</span>
+                  <span class="chip chip-success" style="align-self: flex-start;">Normal</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Card Glass: Mom took her morning dose -->
+            <div class="card glass floating-dose-card" aria-label="Notification update">
+              <span class="chip-live" aria-hidden="true"></span>
+              <span style="font-size: 0.875rem; font-weight: 600; color: var(--text);">Mom took her morning dose</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         Section 3: Features (id="features", 8 Cards, grid-4, card card-interactive reveal)
+         ==================================================================== -->
+    <section class="section" id="features" aria-labelledby="features-heading">
+      <div class="container stack" style="gap: var(--space-48);">
+        <div>
+          <h2 id="features-heading" style="color: var(--text); font-weight: 700; letter-spacing: -0.02em;">
+            Everything your family needs to stay on top of health
+          </h2>
+        </div>
+
+        <div class="grid grid-4">
+          <!-- Card 1: Family profiles -->
+          <div class="card card-interactive reveal">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">Family
+              profiles</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              Add every family member with blood type, allergies and conditions.
+            </p>
+          </div>
+
+          <!-- Card 2: Medicine reminders -->
+          <div class="card card-interactive reveal reveal-delay-1">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path>
+                <path d="m8.5 8.5 7 7"></path>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">Medicine
+              reminders</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              Dose alerts and refill warnings before stock runs out.
+            </p>
+          </div>
+
+          <!-- Card 3: Appointments -->
+          <div class="card card-interactive reveal reveal-delay-2">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">
+              Appointments</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              One calendar for every doctor visit, with reminders.
+            </p>
+          </div>
+
+          <!-- Card 4: Health vault -->
+          <div class="card card-interactive reveal reveal-delay-3">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">Health
+              vault</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              Store reports and prescriptions, share them with a QR passport.
+            </p>
+          </div>
+
+          <!-- Card 5: Vitals tracking -->
+          <div class="card card-interactive reveal">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">Vitals
+              tracking</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              Log blood pressure, glucose, heart rate and SpO2 and see trends.
+            </p>
+          </div>
+
+          <!-- Card 6: Emergency SOS -->
+          <div class="card card-interactive reveal reveal-delay-1">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="12 8 12 12 14 14"></polygon>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">
+              Emergency SOS</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              One press sends your live location to your contacts.
+            </p>
+          </div>
+
+          <!-- Card 7: Family chat -->
+          <div class="card card-interactive reveal reveal-delay-2">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">Family
+              chat</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              Keep caregivers and relatives in the same conversation.
+            </p>
+          </div>
+
+          <!-- Card 8: Prescription scanner -->
+          <div class="card card-interactive reveal reveal-delay-3">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">
+              Prescription scanner</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              Scan a prescription and add the medicines automatically.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         Section 4: How It Works (id="how", 3 Steps with Desktop Connecting Line)
+         ==================================================================== -->
+    <section class="section" id="how" aria-labelledby="how-heading"
+      style="background-color: var(--surface-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container stack" style="gap: var(--space-48);">
+        <div>
+          <h2 id="how-heading" style="color: var(--text); font-weight: 700; letter-spacing: -0.02em;">
+            Set up in three steps
+          </h2>
+        </div>
+
+        <div class="steps-row">
+          <!-- Step 1 -->
+          <div class="step-item">
+            <div class="step-badge" aria-hidden="true">1</div>
+            <h3 style="font-size: 1.1875rem; font-weight: 700; color: var(--text);">Create your family</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.6;">
+              Sign up and add the people you look after.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-item">
+            <div class="step-badge" aria-hidden="true">2</div>
+            <h3 style="font-size: 1.1875rem; font-weight: 700; color: var(--text);">Add medicines and records</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.6;">
+              Type them in or scan a prescription.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-item">
+            <div class="step-badge" aria-hidden="true">3</div>
+            <h3 style="font-size: 1.1875rem; font-weight: 700; color: var(--text);">Stay informed</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.6;">
+              Get reminders and alerts, and see everyone's status at a glance.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         Section 5: Emergency Band (class "emergency-band", only section with red)
+         ==================================================================== -->
+    <section class="section" aria-labelledby="emergency-heading">
+      <div class="container">
+        <div class="emergency-band stack" style="gap: var(--space-20);">
+          <h2 id="emergency-heading" style="font-size: var(--h2-size); font-weight: 700; letter-spacing: -0.02em;">
+            Help reaches your family in seconds.
+          </h2>
+          <p style="font-size: 1.125rem; line-height: 1.6; max-width: 680px; opacity: 0.95;">
+            Press and hold SOS. After a 5-second countdown you can cancel, FamilyCare sends an SMS with your live
+            location to your emergency contacts.
+          </p>
+          <div>
+            <a href="#how" class="btn btn-glass sos-pulse"
+              style="color: #FFFFFF; border-color: rgba(255, 255, 255, 0.45); font-weight: 700;">
+              How SOS works
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         Section 6: Privacy (id="safety", 3 card glass cards + link)
+         ==================================================================== -->
+    <section class="section" id="safety" aria-labelledby="safety-heading">
+      <div class="container stack" style="gap: var(--space-48);">
+        <div>
+          <h2 id="safety-heading" style="color: var(--text); font-weight: 700; letter-spacing: -0.02em;">
+            Your family's data stays yours
+          </h2>
+        </div>
+
+        <div class="grid grid-3">
+          <!-- Card 1 -->
+          <div class="card glass reveal">
+            <div class="card-icon" style="background-color: var(--secondary-subtle); color: var(--secondary);"
+              aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.1875rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">You own
+              your data</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              Export or delete it any time.
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="card glass reveal reveal-delay-1">
+            <div class="card-icon" style="background-color: var(--secondary-subtle); color: var(--secondary);"
+              aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <line x1="9" y1="12" x2="15" y2="12"></line>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.1875rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">Admins
+              can't see health records</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              Support staff see account details only, never vitals or documents.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="card glass reveal reveal-delay-2">
+            <div class="card-icon" style="background-color: var(--secondary-subtle); color: var(--secondary);"
+              aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.1875rem; font-weight: 700; color: var(--text); margin-top: var(--space-12);">Every
+              admin action is logged</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.5; margin-top: var(--space-8);">
+              A permanent audit trail.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <a th:href="@{/privacy}"
+            style="font-weight: 600; color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <span>Read our privacy policy</span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         Section 7: Who It's For (3 Cards: Family admin, Family member, Caregiver)
+         ==================================================================== -->
+    <section class="section" aria-labelledby="roles-heading"
+      style="background-color: var(--surface-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container stack" style="gap: var(--space-48);">
+        <div>
+          <h2 id="roles-heading" style="color: var(--text); font-weight: 700; letter-spacing: -0.02em;">
+            Who it's for
+          </h2>
+        </div>
+
+        <div class="grid grid-3">
+          <!-- Card 1: Family admin -->
+          <div class="card role-card">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Family admin</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.6;">
+              Manages the household and members.
+            </p>
+          </div>
+
+          <!-- Card 2: Family member -->
+          <div class="card role-card">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Family member</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.6;">
+              Tracks their own medicines and vitals.
+            </p>
+          </div>
+
+          <!-- Card 3: Caregiver -->
+          <div class="card role-card">
+            <div class="card-icon" aria-hidden="true">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="M12 8v8"></path>
+                <path d="M8 12h8"></path>
+              </svg>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Caregiver</h3>
+            <p class="muted" style="font-size: 0.9375rem; line-height: 1.6;">
+              Looks after relatives and gets alerts.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         Section 8: FAQ (id="faq", 6 Items, Accessible Accordion)
+         ==================================================================== -->
+    <section class="section" id="faq" aria-labelledby="faq-heading">
+      <div class="container stack" style="gap: var(--space-48);">
+        <div>
+          <h2 id="faq-heading" style="color: var(--text); font-weight: 700; letter-spacing: -0.02em;">
+            Frequently asked questions
+          </h2>
+        </div>
+
+        <div class="faq-accordion">
+          <!-- Item 1 -->
+          <div class="card faq-card">
+            <button type="button" class="faq-trigger" id="faq-btn-1" aria-expanded="false" aria-controls="faq-panel-1">
+              <span>Is FamilyCare free?</span>
+              <svg class="icon-svg faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="faq-panel-1" class="faq-panel" role="region" aria-labelledby="faq-btn-1" hidden>
+              Yes. The core features—family profiles, medicine reminders, vitals tracking, and emergency SOS—are
+              completely free for families.
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="card faq-card">
+            <button type="button" class="faq-trigger" id="faq-btn-2" aria-expanded="false" aria-controls="faq-panel-2">
+              <span>Can I add elderly parents who don't use a phone?</span>
+              <svg class="icon-svg faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="faq-panel-2" class="faq-panel" role="region" aria-labelledby="faq-btn-2" hidden>
+              Yes. A family admin or caregiver can add profiles for relatives and manage their medicines, appointments,
+              and vitals from their own phone.
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="card faq-card">
+            <button type="button" class="faq-trigger" id="faq-btn-3" aria-expanded="false" aria-controls="faq-panel-3">
+              <span>Who can see my health records?</span>
+              <svg class="icon-svg faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="faq-panel-3" class="faq-panel" role="region" aria-labelledby="faq-btn-3" hidden>
+              Only family members and caregivers you explicitly invite. Support staff see account details only, never
+              your medical records or vitals.
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="card faq-card">
+            <button type="button" class="faq-trigger" id="faq-btn-4" aria-expanded="false" aria-controls="faq-panel-4">
+              <span>Does SOS work without internet?</span>
+              <svg class="icon-svg faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="faq-panel-4" class="faq-panel" role="region" aria-labelledby="faq-btn-4" hidden>
+              Yes. Emergency SOS sends an SMS with your live GPS location, which needs a mobile network signal, not an
+              active internet data connection.
+            </div>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="card faq-card">
+            <button type="button" class="faq-trigger" id="faq-btn-5" aria-expanded="false" aria-controls="faq-panel-5">
+              <span>Which languages are supported?</span>
+              <svg class="icon-svg faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="faq-panel-5" class="faq-panel" role="region" aria-labelledby="faq-btn-5" hidden>
+              FamilyCare is available in English, Hindi, and Gujarati, with a senior mode that increases text size and
+              contrast across all screens.
+            </div>
+          </div>
+
+          <!-- Item 6 -->
+          <div class="card faq-card">
+            <button type="button" class="faq-trigger" id="faq-btn-6" aria-expanded="false" aria-controls="faq-panel-6">
+              <span>Can I delete my account and data?</span>
+              <svg class="icon-svg faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="faq-panel-6" class="faq-panel" role="region" aria-labelledby="faq-btn-6" hidden>
+              Yes. You own your data. You can export a copy of all records or permanently delete your account and data
+              at any time from your settings.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         Section 9: Final Call to Action (Glass card centered)
+         ==================================================================== -->
+    <section class="section" aria-labelledby="cta-heading">
+      <div class="container">
+        <div class="card glass stack"
+          style="text-align: center; align-items: center; padding: var(--space-48) var(--space-24); gap: var(--space-24);">
+          <h2 id="cta-heading" style="color: var(--text); font-weight: 700; letter-spacing: -0.02em; max-width: 600px;">
+            Start looking after your family together
+          </h2>
+          <div class="row" style="flex-wrap: wrap; gap: var(--space-16); justify-content: center;">
+            <a th:href="@{/register}" class="btn btn-primary btn-lg">Create free account</a>
+            <a th:href="@{/login}" class="btn btn-secondary btn-lg">Log in</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Section 10: Footer Fragment -->
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <!-- Inline FAQ Accordion Script (Keyboard accessible, only one open at a time) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var triggers = document.querySelectorAll('.faq-trigger');
+      triggers.forEach(function (btn, index) {
+        btn.addEventListener('click', function () {
+          var isExpanded = btn.getAttribute('aria-expanded') === 'true';
+          var targetId = btn.getAttribute('aria-controls');
+          var panel = document.getElementById(targetId);
+
+          // Close all panels
+          triggers.forEach(function (otherBtn) {
+            otherBtn.setAttribute('aria-expanded', 'false');
+            var otherId = otherBtn.getAttribute('aria-controls');
+            var otherPanel = document.getElementById(otherId);
+            if (otherPanel) otherPanel.setAttribute('hidden', '');
+          });
+
+          // Toggle clicked panel
+          if (!isExpanded && panel) {
+            btn.setAttribute('aria-expanded', 'true');
+            panel.removeAttribute('hidden');
+          }
+        });
+
+        // Arrow navigation
+        btn.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            var next = triggers[(index + 1) % triggers.length];
+            if (next) next.focus();
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            var prev = triggers[(index - 1 + triggers.length) % triggers.length];
+            if (prev) prev.focus();
+          }
+        });
+      });
+    });
+  </script>
+
+  <!-- Load theme.js with defer at the end of index.html -->
+  <script defer th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin_layout :: adminHead('Dashboard')}">
+  <title>Admin Dashboard | FamilyCare</title>
+</head>
+
+<body>
+  <!-- Use shell fragment from admin_layout -->
+  <th:block th:replace="~{fragments/admin_layout :: shell('Dashboard', 'dashboard', ~{::#admin-dashboard-body})}">
+    <div id="admin-dashboard-body">
+
+      <!-- Flash alerts -->
+      <div th:if="${successMessage != null}" class="admin-alert admin-alert-success" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span th:text="${successMessage}">Operation successful.</span>
+      </div>
+      <div th:if="${errorMessage != null}" class="admin-alert admin-alert-danger" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span th:text="${errorMessage}">An error occurred.</span>
+      </div>
+
+      <!-- Section 1: KPI Grid (6 cards) -->
+      <section class="kpi-grid" aria-label="Key Performance Indicators">
+        <!-- 1. Total Users -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Total users</span>
+            <div class="kpi-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" th:text="${dashboard.totalUsers}">0</span>
+            <span class="kpi-trend" th:classappend="${dashboard.totalUsersTrendUp} ? 'up' : 'down'">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <polyline th:if="${dashboard.totalUsersTrendUp}" points="18 15 12 9 6 15"/>
+                <polyline th:unless="${dashboard.totalUsersTrendUp}" points="6 9 12 15 18 9"/>
+              </svg>
+              <span th:text="${dashboard.totalUsersChange}">+0%</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 2. New Users this Period -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>New users this period</span>
+            <div class="kpi-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <line x1="19" y1="8" x2="19" y2="14"/>
+                <line x1="22" y1="11" x2="16" y2="11"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" th:text="${dashboard.newUsersPeriod}">0</span>
+            <span style="font-size: 0.72rem; color: var(--muted);" th:text="${'Past ' + dashboard.selectedRange + ' days'}">Past 30 days</span>
+          </div>
+        </div>
+
+        <!-- 3. Active Users -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Active users (30d)</span>
+            <div class="kpi-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" th:text="${dashboard.activeUsers}">0</span>
+            <span style="font-size: 0.72rem; color: var(--muted);">Active login</span>
+          </div>
+        </div>
+
+        <!-- 4. Suspended Users -->
+        <div class="kpi-card" th:classappend="${dashboard.suspendedUsers > 0} ? 'kpi-card-warning' : ''">
+          <div class="kpi-header">
+            <span>Suspended users</span>
+            <div class="kpi-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" th:text="${dashboard.suspendedUsers}">0</span>
+            <span style="font-size: 0.72rem; color: var(--warning);" th:if="${dashboard.suspendedUsers > 0}">Requires review</span>
+            <span style="font-size: 0.72rem; color: var(--muted);" th:unless="${dashboard.suspendedUsers > 0}">Clean</span>
+          </div>
+        </div>
+
+        <!-- 5. Open Support Tickets -->
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span>Open support tickets</span>
+            <div class="kpi-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" th:text="${dashboard.openTickets}">0</span>
+            <span style="font-size: 0.72rem; color: var(--muted);">Pending response</span>
+          </div>
+        </div>
+
+        <!-- 6. SOS Events in 24h -->
+        <div class="kpi-card kpi-card-danger">
+          <div class="kpi-header">
+            <span>SOS alerts (24h)</span>
+            <div class="kpi-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polygon points="12 2 2 22 22 22 12 2"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" th:text="${dashboard.sosEvents24h}">0</span>
+            <span th:if="${dashboard.unacknowledgedSosCount > 0}" class="badge badge-suspended" style="font-size: 0.72rem;">
+              <span class="sos-pulse"></span>
+              <span th:text="${dashboard.unacknowledgedSosCount + ' unacknowledged'}">1 unack</span>
+            </span>
+            <span th:unless="${dashboard.unacknowledgedSosCount > 0}" style="font-size: 0.72rem; color: var(--muted);">All acknowledged</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Charts (2 columns) -->
+      <section class="charts-grid" aria-label="Analytics and Distribution Charts">
+        <!-- Left: Daily sign-ups area chart -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h2 class="chart-card-title">Daily sign-ups</h2>
+            <span style="font-size: 0.75rem; color: var(--muted);" th:text="${'Past ' + dashboard.selectedRange + ' days'}">Past 30 days</span>
+          </div>
+          <div id="signups-chart-container" class="chart-container" th:data-chart="${dashboard.dailySignupsJson}">
+            <!-- SVG Area Chart drawn here by static/js/admin.js -->
+          </div>
+          <!-- Fallback accessibility table -->
+          <details style="font-size: 0.75rem; color: var(--muted); margin-top: 6px;">
+            <summary style="cursor: pointer;">Show data table fallback</summary>
+            <table class="admin-table" style="margin-top: 8px;">
+              <thead>
+                <tr><th>Date</th><th>Sign-ups</th></tr>
+              </thead>
+              <tbody>
+                <tr th:each="d : ${dashboard.dailySignups}">
+                  <td th:text="${d.date}">Date</td>
+                  <td th:text="${d.count}">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </details>
+        </div>
+
+        <!-- Right: Role distribution donut chart -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h2 class="chart-card-title">User distribution by role</h2>
+            <span style="font-size: 0.75rem; color: var(--muted);">Account roles</span>
+          </div>
+          <div class="donut-wrapper">
+            <div id="donut-chart-container"
+                 th:data-admin="${dashboard.familyAdminPercent}"
+                 th:data-member="${dashboard.familyMemberPercent}"
+                 th:data-caregiver="${dashboard.caregiverPercent}">
+              <!-- SVG Donut rendered by admin.js -->
+            </div>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <span class="legend-label">
+                  <span class="legend-bullet" style="background-color: var(--primary);"></span>
+                  <span>Family admin</span>
+                </span>
+                <span class="legend-count" th:text="${dashboard.familyAdminCount}">0</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-label">
+                  <span class="legend-bullet" style="background-color: var(--secondary);"></span>
+                  <span>Family member</span>
+                </span>
+                <span class="legend-count" th:text="${dashboard.familyMemberCount}">0</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-label">
+                  <span class="legend-bullet" style="background-color: var(--warning);"></span>
+                  <span>Caregiver</span>
+                </span>
+                <span class="legend-count" th:text="${dashboard.caregiverCount}">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Two tables (Recent SOS events & Recent Registrations) -->
+      <section class="tables-grid" aria-label="Recent Operational Events">
+        <!-- Left: Recent SOS Events -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" aria-hidden="true">
+                <polygon points="12 2 2 22 22 22 12 2"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <span>Recent SOS alerts</span>
+            </h2>
+          </div>
+          <div class="admin-table-container">
+            <table class="admin-table" aria-label="Recent Emergency Alerts Table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Timestamp</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${#lists.isEmpty(dashboard.recentSosEvents)}">
+                  <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">No recent emergency events recorded.</td>
+                </tr>
+                <tr th:each="sos : ${dashboard.recentSosEvents}">
+                  <td>
+                    <div style="font-weight: 600;" th:text="${sos.userName}">User</div>
+                    <div style="font-size: 0.72rem; color: var(--muted);" th:text="${sos.userEmail}">email@domain.com</div>
+                  </td>
+                  <td th:text="${sos.formattedTime}" style="white-space: nowrap;">Time</td>
+                  <td>
+                    <span th:if="${sos.latitude != null}">
+                      <a th:href="@{'https://maps.google.com/?q=' + ${sos.latitude} + ',' + ${sos.longitude}}"
+                         target="_blank" rel="noopener" class="admin-card-link" style="display: inline-flex; align-items: center; gap: 4px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                          <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span>Map link</span>
+                      </a>
+                    </span>
+                    <span th:unless="${sos.latitude != null}" style="color: var(--muted);">—</span>
+                  </td>
+                  <td class="sos-status-cell">
+                    <span th:if="${sos.unacknowledged}" class="sos-pulse" style="margin-right: 4px;" title="Unacknowledged"></span>
+                    <span class="badge" th:classappend="${sos.unacknowledged} ? 'badge-suspended' : 'badge-active'" th:text="${sos.status}">TRIGGERED</span>
+                  </td>
+                  <td>
+                    <button th:if="${sos.unacknowledged}" type="button" class="btn-sm btn-sm-primary btn-ack-sos"
+                            th:data-id="${sos.id}" sec:authorize="hasAnyRole('SUPER_ADMIN', 'SUPPORT_AGENT')">
+                      Acknowledge
+                    </button>
+                    <span th:unless="${sos.unacknowledged}" style="font-size: 0.76rem; color: var(--muted);">Resolved</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: Recent User Registrations -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2 class="admin-card-title">Recent registrations</h2>
+            <a th:href="@{/admin/users}" class="admin-card-link">View all users &rarr;</a>
+          </div>
+          <div class="admin-table-container">
+            <table class="admin-table" aria-label="Recent User Registrations Table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Registered</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${#lists.isEmpty(dashboard.recentUsers)}">
+                  <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">No user registrations recorded yet.</td>
+                </tr>
+                <tr th:each="user : ${dashboard.recentUsers}">
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-avatar-sm" th:text="${user.initials}">FC</div>
+                      <div>
+                        <div style="font-weight: 600;" th:text="${user.fullName}">Full Name</div>
+                        <div style="font-size: 0.72rem; color: var(--muted);" th:text="${user.email}">user@example.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge badge-role" th:text="${user.role}">FAMILY_ADMIN</span>
+                  </td>
+                  <td>
+                    <span class="badge" th:classappend="${user.status == 'ACTIVE' ? 'badge-active' : (user.status == 'SUSPENDED' ? 'badge-suspended' : 'badge-pending')}"
+                          th:text="${user.status}">ACTIVE</span>
+                  </td>
+                  <td th:text="${user.createdAtFormatted}" style="white-space: nowrap;">Nov 23</td>
+                  <td>
+                    <a th:href="@{'/admin/users/' + ${user.id}}" class="btn-sm">View</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Recent Audit Events -->
+      <section class="admin-card" aria-label="Recent Audit Events Section">
+        <div class="admin-card-header">
+          <h2 class="admin-card-title">Recent audit events</h2>
+          <a th:href="@{/admin/audit}" class="admin-card-link" sec:authorize="hasAnyRole('SUPER_ADMIN', 'ANALYST')">View full audit log &rarr;</a>
+        </div>
+        <div class="admin-table-container">
+          <table class="admin-table" aria-label="Recent Audit Log Table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Actor</th>
+                <th>Action</th>
+                <th>Target</th>
+                <th>Details</th>
+                <th>IP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#lists.isEmpty(dashboard.recentAuditLogs)}">
+                <td colspan="6" style="text-align: center; color: var(--muted); padding: 20px;">No audit events recorded yet.</td>
+              </tr>
+              <tr th:each="log : ${dashboard.recentAuditLogs}">
+                <td th:text="${log.createdAtFormatted}" style="white-space: nowrap; color: var(--muted);">Time</td>
+                <td style="font-weight: 500;" th:text="${log.actorEmail != null ? log.actorEmail : 'SYSTEM'}">actor</td>
+                <td>
+                  <span class="badge badge-role" th:text="${log.action}">LOGIN</span>
+                </td>
+                <td style="color: var(--muted);" th:text="${(log.targetType != null ? log.targetType : '—') + (log.targetId != null ? ' #' + log.targetId : '')}">Target</td>
+                <td th:text="${log.detail != null ? log.detail : '—'}">Detail</td>
+                <td style="font-family: monospace; font-size: 0.76rem; color: var(--muted);" th:text="${log.ip != null ? log.ip : '—'}">127.0.0.1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 5: System Health Strip -->
+      <section class="health-strip" aria-label="System Health Metrics">
+        <div class="health-metrics">
+          <div class="health-item">
+            <span class="health-label">System state</span>
+            <span class="health-val" style="display: flex; align-items: center; gap: 6px;">
+              <span class="status-dot" style="background-color: var(--success);" th:if="${dashboard.systemHealthy}"></span>
+              <span class="status-dot" style="background-color: var(--danger);" th:unless="${dashboard.systemHealthy}"></span>
+              <span th:text="${dashboard.systemStatusLabel}">Healthy</span>
+            </span>
+          </div>
+          <div class="health-item">
+            <span class="health-label">Database response</span>
+            <span class="health-val" th:text="${dashboard.dbPingMs >= 0 ? dashboard.dbPingMs + ' ms' : 'Unavailable'}">3 ms</span>
+          </div>
+          <div class="health-item">
+            <span class="health-label">JVM uptime</span>
+            <span class="health-val" th:text="${dashboard.jvmUptime}">2h 15m</span>
+          </div>
+          <div class="health-item">
+            <span class="health-label">Platform version</span>
+            <span class="health-val" th:text="${dashboard.appVersion}">1.0.0</span>
+          </div>
+        </div>
+
+        <div>
+          <a th:href="@{/actuator/health}" target="_blank" rel="noopener" class="btn-sm" sec:authorize="hasAnyRole('SUPER_ADMIN', 'SUPPORT_AGENT', 'ANALYST')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            <span>Raw health endpoint</span>
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </th:block>
+</body>
+</html>

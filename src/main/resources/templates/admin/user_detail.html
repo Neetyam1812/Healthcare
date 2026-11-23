@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin_layout :: adminHead('User Details')}">
+  <title>User Details | FamilyCare Admin</title>
+</head>
+
+<body>
+  <th:block th:replace="~{fragments/admin_layout :: shell('User account details', 'users', ~{::#admin-user-detail-body})}">
+    <div id="admin-user-detail-body">
+
+      <!-- Back Link -->
+      <div>
+        <a th:href="@{/admin/users}" class="admin-card-link" style="display: inline-flex; align-items: center; gap: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+          <span>Back to users list</span>
+        </a>
+      </div>
+
+      <!-- Flash alerts -->
+      <div th:if="${successMessage != null}" class="admin-alert admin-alert-success" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span th:text="${successMessage}">Operation successful.</span>
+      </div>
+      <div th:if="${errorMessage != null}" class="admin-alert admin-alert-danger" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span th:text="${errorMessage}">An error occurred.</span>
+      </div>
+
+      <!-- Mandatory Privacy Banner -->
+      <div class="privacy-banner" role="note">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <span>
+          <strong>HIPAA & Privacy Notice:</strong> Health records, vitals, prescriptions, and medical files are private and strictly inaccessible to administrative staff. Only account status and metadata are shown.
+        </span>
+      </div>
+
+      <!-- Account Header Card -->
+      <div class="user-header-card">
+        <div class="user-header-profile">
+          <div class="user-avatar-lg" th:text="${targetUser.initials}">FC</div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--heading); margin: 0;" th:text="${targetUser.fullName}">Full Name</h2>
+              <span class="badge" th:classappend="${targetUser.status == 'ACTIVE' ? 'badge-active' : (targetUser.status == 'SUSPENDED' ? 'badge-suspended' : 'badge-pending')}"
+                    th:text="${targetUser.status}">ACTIVE</span>
+              <span th:if="${targetUser.platformRole != null}" class="badge badge-priority-high" th:text="${targetUser.platformRole}">SUPER_ADMIN</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--muted); margin-top: 4px;" th:text="${targetUser.email}">user@example.com</div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div sec:authorize="hasAnyRole('SUPER_ADMIN', 'SUPPORT_AGENT')">
+          <button th:if="${targetUser.status != 'SUSPENDED' && !targetUser.superAdmin && !targetUser.self}"
+                  type="button" class="btn-sm btn-sm-danger btn-open-status-modal"
+                  th:data-user-id="${targetUser.id}"
+                  th:data-user-name="${targetUser.fullName}"
+                  data-action="SUSPEND">
+            Suspend account
+          </button>
+          <button th:if="${targetUser.status == 'SUSPENDED' && !targetUser.superAdmin && !targetUser.self}"
+                  type="button" class="btn-sm btn-sm-primary btn-open-status-modal"
+                  th:data-user-id="${targetUser.id}"
+                  th:data-user-name="${targetUser.fullName}"
+                  data-action="ACTIVATE">
+            Activate account
+          </button>
+        </div>
+      </div>
+
+      <!-- Account Metadata Grid (Zero Health Data) -->
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">Account ID</span>
+          <span class="detail-value" th:text="${'#' + targetUser.id}">#1</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Phone number</span>
+          <span class="detail-value" th:text="${targetUser.phoneNumber}">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Portal role</span>
+          <span class="detail-value" th:text="${targetUser.role}">FAMILY_ADMIN</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Family profiles count</span>
+          <span class="detail-value" th:text="${targetUser.familyMemberCount + ' member profile(s)'}">0 member profiles</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Registration date</span>
+          <span class="detail-value" th:text="${targetUser.createdAtFormatted}">Nov 23, 2026</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Last login timestamp</span>
+          <span class="detail-value" th:text="${targetUser.lastLoginFormatted}">Never</span>
+        </div>
+      </div>
+
+      <!-- Security Audit Log for This User -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h2 class="admin-card-title">Security & audit trail for this account</h2>
+        </div>
+        <div class="admin-table-container">
+          <table class="admin-table" aria-label="Account Security History">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Staff actor</th>
+                <th>Action</th>
+                <th>Details / Reason</th>
+                <th>IP address</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#lists.isEmpty(targetUser.auditLogs)}">
+                <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">
+                  No administrative actions logged for this account yet.
+                </td>
+              </tr>
+              <tr th:each="log : ${targetUser.auditLogs}">
+                <td th:text="${log.createdAtFormatted}" style="white-space: nowrap; color: var(--muted);">Time</td>
+                <td th:text="${log.actorEmail != null ? log.actorEmail : 'SYSTEM'}">Staff</td>
+                <td>
+                  <span class="badge badge-role" th:text="${log.action}">USER_SUSPENDED</span>
+                </td>
+                <td th:text="${log.detail != null ? log.detail : '—'}">Detail</td>
+                <td style="font-family: monospace; font-size: 0.76rem; color: var(--muted);" th:text="${log.ip != null ? log.ip : '—'}">127.0.0.1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Support Tickets Filed By This User -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h2 class="admin-card-title">Support inquiries</h2>
+        </div>
+        <div class="admin-table-container">
+          <table class="admin-table" aria-label="Support Tickets Table">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Subject</th>
+                <th>Category</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#lists.isEmpty(targetUser.supportTickets)}">
+                <td colspan="6" style="text-align: center; color: var(--muted); padding: 20px;">
+                  No support tickets filed by this user.
+                </td>
+              </tr>
+              <tr th:each="t : ${targetUser.supportTickets}">
+                <td th:text="${'#' + t.id}">#1</td>
+                <td style="font-weight: 600;" th:text="${t.subject}">Subject</td>
+                <td th:text="${t.category}">Category</td>
+                <td>
+                  <span class="badge" th:classappend="${t.priority == 'HIGH' ? 'badge-priority-high' : (t.priority == 'MEDIUM' ? 'badge-priority-med' : 'badge-priority-low')}"
+                        th:text="${t.priority}">HIGH</span>
+                </td>
+                <td>
+                  <span class="badge badge-role" th:text="${t.status}">OPEN</span>
+                </td>
+                <td th:text="${t.createdAtFormatted}">Time</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </th:block>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found | FamilyCare</title>
+  <link rel="stylesheet" th:href="@{/css/theme.css}">
+  <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body class="auth-viewport" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+  <div style="background: var(--auth-card-bg, #ffffff); border: 1px solid var(--auth-border, rgba(0,0,0,0.08)); padding: 48px 36px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; max-width: 460px; width: 90%;">
+    <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(59, 130, 246, 0.12); color: #3B82F6; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+      <svg style="width: 32px; height: 32px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+    <h1 style="color: var(--auth-heading, #0f172a); font-size: 1.75rem; margin-bottom: 8px;">404 - Page Not Found</h1>
+    <p style="color: var(--auth-body, #475569); margin-bottom: 28px; line-height: 1.5;">
+      The page you are looking for does not exist or has been moved.
+    </p>
+    <a th:href="@{/}" class="auth-submit-btn" style="text-decoration: none; display: inline-flex; width: auto; padding: 12px 28px; margin: 0 auto;">
+      <span>Back to home</span>
+    </a>
+  </div>
+</body>
+</html>

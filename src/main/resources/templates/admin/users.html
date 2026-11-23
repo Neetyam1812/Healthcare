@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin_layout :: adminHead('User Accounts')}">
+  <title>User Accounts | FamilyCare Admin</title>
+</head>
+
+<body>
+  <th:block th:replace="~{fragments/admin_layout :: shell('User accounts', 'users', ~{::#admin-users-body})}">
+    <div id="admin-users-body">
+
+      <!-- Flash alerts -->
+      <div th:if="${successMessage != null}" class="admin-alert admin-alert-success" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span th:text="${successMessage}">Operation successful.</span>
+      </div>
+      <div th:if="${errorMessage != null}" class="admin-alert admin-alert-danger" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span th:text="${errorMessage}">An error occurred.</span>
+      </div>
+
+      <!-- Filter Bar -->
+      <form th:action="@{/admin/users}" method="get" class="filter-bar" role="search">
+        <div class="filter-group">
+          <!-- Text search -->
+          <input type="text" name="q" th:value="${query}" placeholder="Search by name or email..." class="form-input" style="width: 250px;">
+
+          <!-- Status Dropdown -->
+          <select name="status" class="form-select">
+            <option value="ALL" th:selected="${currentStatus == 'ALL'}">All account statuses</option>
+            <option value="ACTIVE" th:selected="${currentStatus == 'ACTIVE'}">Active accounts</option>
+            <option value="SUSPENDED" th:selected="${currentStatus == 'SUSPENDED'}">Suspended accounts</option>
+            <option value="PENDING" th:selected="${currentStatus == 'PENDING'}">Pending verification</option>
+          </select>
+
+          <!-- Sort Dropdown -->
+          <select name="sort" class="form-select">
+            <option value="newest" th:selected="${currentSort == 'newest'}">Newest registered</option>
+            <option value="oldest" th:selected="${currentSort == 'oldest'}">Oldest registered</option>
+            <option value="name" th:selected="${currentSort == 'name'}">Full name (A-Z)</option>
+            <option value="last-login" th:selected="${currentSort == 'last-login'}">Recently active</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <button type="submit" class="btn-sm btn-sm-primary">Filter users</button>
+          <a th:href="@{/admin/users}" class="btn-sm">Reset</a>
+        </div>
+      </form>
+
+      <!-- Users Table Card -->
+      <div class="admin-card">
+        <div class="admin-table-container">
+          <table class="admin-table" aria-label="FamilyCare Users Table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>Platform role</th>
+                <th>Status</th>
+                <th>Registered</th>
+                <th>Last login</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#lists.isEmpty(usersPage.content)}">
+                <td colspan="7" style="text-align: center; color: var(--muted); padding: 30px;">
+                  No users matched the search criteria.
+                </td>
+              </tr>
+              <tr th:each="user : ${usersPage.content}">
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar-sm" th:text="${user.initials}">FC</div>
+                    <div>
+                      <div style="font-weight: 600;" th:text="${user.fullName}">Full Name</div>
+                      <div style="font-size: 0.72rem; color: var(--muted);" th:text="${user.email}">user@example.com</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge badge-role" th:text="${user.role}">FAMILY_ADMIN</span>
+                </td>
+                <td>
+                  <span th:if="${user.platformRole != null}" class="badge badge-priority-high" th:text="${user.platformRole}">SUPER_ADMIN</span>
+                  <span th:unless="${user.platformRole != null}" style="color: var(--muted); font-size: 0.76rem;">User</span>
+                </td>
+                <td>
+                  <span class="badge" th:classappend="${user.status == 'ACTIVE' ? 'badge-active' : (user.status == 'SUSPENDED' ? 'badge-suspended' : 'badge-pending')}"
+                        th:text="${user.status}">ACTIVE</span>
+                </td>
+                <td th:text="${user.createdAtFormatted}" style="white-space: nowrap;">Nov 23, 2026</td>
+                <td th:text="${user.lastLoginFormatted}" style="white-space: nowrap;">Nov 23, 2026</td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <!-- View Link -->
+                    <a th:href="@{'/admin/users/' + ${user.id}}" class="btn-sm">View</a>
+
+                    <!-- Suspend / Activate Button (SUPER_ADMIN and SUPPORT_AGENT only; prohibited on self or SUPER_ADMIN) -->
+                    <th:block sec:authorize="hasAnyRole('SUPER_ADMIN', 'SUPPORT_AGENT')">
+                      <button th:if="${user.status != 'SUSPENDED' && !user.superAdmin && !user.self}"
+                              type="button"
+                              class="btn-sm btn-sm-danger btn-open-status-modal"
+                              th:data-user-id="${user.id}"
+                              th:data-user-name="${user.fullName}"
+                              data-action="SUSPEND">
+                        Suspend
+                      </button>
+
+                      <button th:if="${user.status == 'SUSPENDED' && !user.superAdmin && !user.self}"
+                              type="button"
+                              class="btn-sm btn-sm-primary btn-open-status-modal"
+                              th:data-user-id="${user.id}"
+                              th:data-user-name="${user.fullName}"
+                              data-action="ACTIVATE">
+                        Activate
+                      </button>
+                    </th:block>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper" th:if="${totalPages > 1}">
+          <div style="font-size: 0.78rem; color: var(--muted);">
+            Showing page <span style="font-weight: 700; color: var(--heading);" th:text="${currentPage + 1}">1</span>
+            of <span style="font-weight: 700; color: var(--heading);" th:text="${totalPages}">1</span>
+          </div>
+          <div class="pagination-links">
+            <a th:href="@{/admin/users(q=${query}, status=${currentStatus}, sort=${currentSort}, page=${currentPage - 1})}"
+               class="page-btn" th:classappend="${currentPage == 0} ? 'disabled' : ''">&larr; Previous</a>
+
+            <th:block th:each="p : ${#numbers.sequence(0, totalPages - 1)}">
+              <a th:if="${p >= currentPage - 2 && p <= currentPage + 2}"
+                 th:href="@{/admin/users(q=${query}, status=${currentStatus}, sort=${currentSort}, page=${p})}"
+                 class="page-btn" th:classappend="${p == currentPage} ? 'active' : ''"
+                 th:text="${p + 1}">1</a>
+            </th:block>
+
+            <a th:href="@{/admin/users(q=${query}, status=${currentStatus}, sort=${currentSort}, page=${currentPage + 1})}"
+               class="page-btn" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled' : ''">Next &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </th:block>
+</body>
+</html>

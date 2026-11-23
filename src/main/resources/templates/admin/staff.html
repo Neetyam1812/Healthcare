@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/admin_layout :: adminHead('Staff Management')}">
+  <title>Staff Management | FamilyCare Admin</title>
+</head>
+
+<body>
+  <th:block th:replace="~{fragments/admin_layout :: shell('Staff management', 'staff', ~{::#admin-staff-body})}">
+    <div id="admin-staff-body">
+
+      <div class="privacy-banner" role="note" style="background-color: var(--primary-subtle); border-color: rgba(194, 85, 47, 0.3); color: var(--primary);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 2a5 5 0 0 1 5 5v2a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5z"/>
+          <path d="M19 21v-2a6 6 0 0 0-12 0v2"/>
+        </svg>
+        <span>
+          <strong>SUPER_ADMIN Access Area:</strong> Only users with the <code>ROLE_SUPER_ADMIN</code> platform authority can view and manage staff members.
+        </span>
+      </div>
+
+      <!-- Staff Accounts Table Card -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h2 class="admin-card-title">Administrative staff roster</h2>
+        </div>
+        <div class="admin-table-container">
+          <table class="admin-table" aria-label="Staff Accounts Table">
+            <thead>
+              <tr>
+                <th>Staff member</th>
+                <th>Email</th>
+                <th>Assigned platform role</th>
+                <th>Status</th>
+                <th>Capabilities</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:if="${#lists.isEmpty(staffMembers)}">
+                <td colspan="5" style="text-align: center; color: var(--muted); padding: 20px;">No staff accounts configured.</td>
+              </tr>
+              <tr th:each="staff : ${staffMembers}">
+                <td style="font-weight: 600;" th:text="${staff.fullName}">Staff Name</td>
+                <td th:text="${staff.email}">email@domain.com</td>
+                <td>
+                  <span class="badge" th:classappend="${staff.platformRole == 'SUPER_ADMIN' ? 'badge-priority-high' : 'badge-role'}"
+                        th:text="${staff.platformRole}">SUPER_ADMIN</span>
+                </td>
+                <td>
+                  <span class="badge badge-active" th:text="${staff.status}">ACTIVE</span>
+                </td>
+                <td style="font-size: 0.76rem; color: var(--muted);">
+                  <span th:if="${staff.platformRole == 'SUPER_ADMIN'}">Full access (all permissions, staff management, CSV export)</span>
+                  <span th:if="${staff.platformRole == 'SUPPORT_AGENT'}">Operational support (view users, suspend/activate, tickets, SOS acknowledge)</span>
+                  <span th:if="${staff.platformRole == 'ANALYST'}">Read-only audit & analytics (view dashboard, audit logs; no mutations)</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </th:block>
+</body>
+</html>

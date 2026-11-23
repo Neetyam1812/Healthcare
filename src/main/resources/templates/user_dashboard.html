@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/user_layout :: userHead('Family Dashboard')}">
+  <title>Family Dashboard | FamilyCare</title>
+</head>
+
+<body>
+  <!-- Use shell fragment from user_layout -->
+  <th:block th:replace="~{fragments/user_layout :: shell('Family Dashboard', 'dashboard', ~{::#user-dashboard-body})}">
+    <div id="user-dashboard-body">
+
+      <!-- Greeting Header Area (Aurora Background ONLY here) -->
+      <section class="dashboard-hero aurora" aria-label="Welcome and Overview">
+        <div class="hero-inner">
+          <div class="hero-greeting">
+            <h1>
+              <span th:text="${dashboard.greeting}">Good day</span>,
+              <span th:text="${dashboard.userFirstName}">Family</span>
+            </h1>
+            <div class="hero-date" th:text="${dashboard.todayDateFormatted}">Monday, Nov 23, 2026</div>
+          </div>
+          <div class="hero-quick-status">
+            <span class="status-chip"
+                  th:classappend="${dashboard.latestVitalsStatus == 'HIGH' ? 'high' : (dashboard.latestVitalsStatus == 'ELEVATED' ? 'elevated' : 'normal')}"
+                  th:if="${dashboard.latestVitalsStatus != 'NO_DATA'}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+              <span th:text="${dashboard.latestVitalsStatus == 'NORMAL' ? 'Vitals normal' : dashboard.latestVitalsStatus}">Vitals normal</span>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 1: Alert Banner (Dismissible, only shown when needed) -->
+      <div id="dashboard-alert-banner" class="alert-banner" role="alert" th:if="${dashboard.hasAlert}">
+        <div class="alert-banner-content">
+          <svg class="alert-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <div>
+            <div class="alert-banner-title" th:text="${dashboard.alertTitle}">Health alert</div>
+            <div class="alert-banner-text">
+              <span th:text="${dashboard.alertMessage}">Important healthcare reminder</span>
+              <a th:href="${dashboard.alertActionLink}" class="alert-banner-link" th:text="${dashboard.alertActionText}">View details</a>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="alert-dismiss-btn" class="alert-dismiss-btn" aria-label="Dismiss alert banner">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Section 2: Four Stat Cards (12-column grid, 3 cols each) -->
+      <section class="dash-grid" aria-label="Key Health Statistics">
+        <!-- Stat 1: Family Members -->
+        <div class="dash-card stat-card col-3">
+          <div class="stat-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="stat-label">Family members</div>
+          <div class="stat-value" th:attr="data-counter-target=${dashboard.familyMembersCount}" th:text="${dashboard.familyMembersCount}">0</div>
+          <div class="stat-subtext" th:text="${dashboard.familyMembersCount == 1 ? '1 profile active' : dashboard.familyMembersCount + ' profiles active'}">0 profiles active</div>
+        </div>
+
+        <!-- Stat 2: Medicines Today -->
+        <div class="dash-card stat-card col-3">
+          <div class="stat-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/>
+              <path d="m8.5 8.5 7 7"/>
+            </svg>
+          </div>
+          <div class="stat-label">Medicines today</div>
+          <div class="stat-value">
+            <span th:text="${dashboard.medicinesTakenToday}">0</span>
+            <span style="font-size: 1.15rem; font-weight: 600; color: var(--muted);" th:text="' / ' + ${dashboard.medicinesTotalToday}"> / 0</span>
+          </div>
+          <div class="stat-subtext" th:text="${dashboard.medicinesTotalToday == 0 ? 'No doses scheduled' : dashboard.medicinesTakenToday + ' taken so far'}">0 taken so far</div>
+        </div>
+
+        <!-- Stat 3: Next Appointment -->
+        <div class="dash-card stat-card col-3">
+          <div class="stat-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div class="stat-label">Next appointment</div>
+          <div class="stat-value" style="font-size: 1.25rem; margin-top: 4px;" th:text="${dashboard.nextAppointmentRelative}">No upcoming</div>
+          <div class="stat-subtext" th:text="${dashboard.nextAppointmentDoctor}">No visits booked</div>
+        </div>
+
+        <!-- Stat 4: Latest Vitals Status -->
+        <div class="dash-card stat-card col-3">
+          <div class="stat-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="stat-label">Latest vitals</div>
+          <div style="margin-top: 6px;">
+            <span class="status-chip"
+                  th:classappend="${dashboard.latestVitalsStatus == 'HIGH' ? 'high' : (dashboard.latestVitalsStatus == 'ELEVATED' ? 'elevated' : (dashboard.latestVitalsStatus == 'NORMAL' ? 'normal' : 'no-data'))}"
+                  th:text="${dashboard.latestVitalsStatus == 'NORMAL' ? 'Normal' : (dashboard.latestVitalsStatus == 'ELEVATED' ? 'Elevated' : (dashboard.latestVitalsStatus == 'HIGH' ? 'High' : 'No records'))}">
+              Normal
+            </span>
+          </div>
+          <div class="stat-subtext" th:text="${dashboard.latestVitalsSummary}">No vitals recorded yet</div>
+        </div>
+      </section>
+
+      <!-- Main Two-Column Row: Medicines (7 cols) & Adherence (5 cols) -->
+      <section class="dash-grid" aria-label="Medication Tracking and Adherence">
+        <!-- Section 3: Today's Medicines (7 Columns) -->
+        <div class="dash-card col-7" id="medicines-section">
+          <div class="dash-card-header">
+            <h2 class="dash-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/>
+              </svg>
+              <span>Today's medicines</span>
+            </h2>
+            <span class="dash-card-action" th:text="${dashboard.medicinesTakenToday + ' of ' + dashboard.medicinesTotalToday + ' taken'}">0 of 0 taken</span>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" th:if="${#lists.isEmpty(dashboard.todayMedicines)}">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+              <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/>
+              <path d="m8.5 8.5 7 7"/>
+            </svg>
+            <div class="empty-state-title">No medicines yet</div>
+            <div class="empty-state-desc">Keep track of daily prescriptions, dosages, and family medication schedules here.</div>
+            <button type="button" class="btn btn-primary" onclick="alert('Medication manager is coming in the next update.');">Add medicine</button>
+          </div>
+
+          <!-- Medication List -->
+          <div class="med-list" th:unless="${#lists.isEmpty(dashboard.todayMedicines)}">
+            <div th:each="med : ${dashboard.todayMedicines}"
+                 th:id="'med-row-' + ${med.id}"
+                 class="med-row"
+                 th:classappend="${med.takenToday} ? 'taken' : ''">
+              <div class="med-info">
+                <div class="med-check-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="med-name" th:text="${med.name}">Medication Name</div>
+                  <div class="med-dosage-time">
+                    <span th:text="${med.dosage}">500mg</span>
+                    <span>•</span>
+                    <span th:text="${med.timeOfDay}">08:00 AM</span>
+                    <span>•</span>
+                    <span class="med-tag" th:text="${med.memberName}">Whole family</span>
+                    <span class="med-tag low-stock med-stock-count" th:if="${med.lowStock}" th:text="${med.stockCount + ' left'}">3 left</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <button type="button"
+                        class="btn-take"
+                        th:attr="data-med-id=${med.id}"
+                        th:disabled="${med.takenToday}">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  <span th:text="${med.takenToday ? 'Taken' : 'Mark taken'}">Mark taken</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Adherence (5 Columns) -->
+        <div class="dash-card col-5">
+          <div class="dash-card-header">
+            <h2 class="dash-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>Adherence</span>
+            </h2>
+          </div>
+
+          <div class="adherence-wrapper">
+            <!-- Inline SVG Ring Chart Container -->
+            <div class="adherence-ring-box">
+              <div id="adherence-ring-svg" th:attr="data-pct=${dashboard.todayAdherencePercentage}">
+                <!-- Rendered dynamically by dashboard.js -->
+              </div>
+              <div class="adherence-ring-value">
+                <div class="adherence-pct" th:text="${dashboard.todayAdherencePercentage + '%'}">0%</div>
+                <div class="adherence-pct-sub">Today's goal</div>
+              </div>
+            </div>
+
+            <div class="adherence-summary" th:text="${dashboard.adherenceSummary}">
+              3 of 4 medications taken today.
+            </div>
+
+            <!-- 7-Day Sparkline Bar Chart -->
+            <div class="sparkline-box">
+              <div class="sparkline-title">Last 7 days routine</div>
+              <div class="sparkline-bars">
+                <div class="sparkline-col"
+                     th:each="day : ${dashboard.weeklyAdherence}"
+                     th:classappend="${day.isToday} ? 'is-today' : ''"
+                     th:title="${day.dayLabel + ': ' + day.percentage + '% taken'}">
+                  <div class="sparkline-bar"
+                       th:classappend="${day.percentage > 0} ? 'active' : ''"
+                       th:style="'height: ' + ${day.percentage == 0 ? 6 : day.percentage} + '%;'"></div>
+                  <span class="sparkline-label" th:text="${day.dayLabel}">Mon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Family Members (Full Width, 12 Columns) -->
+      <section class="dash-grid" id="family-section" aria-label="Family Member Profiles">
+        <div class="dash-card col-12">
+          <div class="dash-card-header">
+            <h2 class="dash-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+              </svg>
+              <span>Family members</span>
+            </h2>
+            <span class="dash-card-action" th:text="${dashboard.familyMembersCount + ' members'}">0 members</span>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" th:if="${#lists.isEmpty(dashboard.familyMembers)}">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+            </svg>
+            <div class="empty-state-title">No family profiles yet</div>
+            <div class="empty-state-desc">Add family members, parents, or dependents to coordinate medical appointments, vitals, and emergency contacts.</div>
+            <button type="button" class="btn btn-primary" onclick="alert('Add member form is coming in the next update.');">Add member</button>
+          </div>
+
+          <!-- Family Member Cards Grid -->
+          <div class="family-grid" th:unless="${#lists.isEmpty(dashboard.familyMembers)}">
+            <div th:each="mem : ${dashboard.familyMembers}" class="family-card">
+              <div class="family-card-top">
+                <div class="family-avatar" th:text="${mem.initials}">NP</div>
+                <div>
+                  <div class="family-name" th:text="${mem.fullName}">Member Name</div>
+                  <div class="family-rel">
+                    <span th:text="${mem.relationship}">Relationship</span>
+                    <span th:if="${mem.age != null}" th:text="' • ' + ${mem.age} + ' yrs'"> • 42 yrs</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="family-chips">
+                <span class="med-tag" th:if="${mem.bloodType != null and mem.bloodType != 'Unknown'}" th:text="'Blood: ' + ${mem.bloodType}">Blood: O+</span>
+                <span class="med-tag low-stock" th:if="${mem.allergies != null and !#strings.isEmpty(mem.allergies)}" th:text="'Allergy: ' + ${mem.allergies}">Allergy: Penicillin</span>
+                <span class="med-tag" th:if="${mem.chronicConditions != null and !#strings.isEmpty(mem.chronicConditions)}" th:text="${mem.chronicConditions}">Condition</span>
+              </div>
+            </div>
+
+            <!-- Add Member CTA Card at the end -->
+            <a href="#" class="family-add-card" onclick="alert('Add member dialog is coming in the next update.'); return false;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+              <span style="font-weight: 700; font-size: 0.9375rem;">Add family member</span>
+              <span style="font-size: 0.775rem;">Create a new personal profile</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Row: Appointments (6 cols) & Vitals Overview (6 cols) -->
+      <section class="dash-grid" aria-label="Appointments and Health Vitals">
+        <!-- Section 6: Upcoming Appointments (6 Columns) -->
+        <div class="dash-card col-6" id="appointments-section">
+          <div class="dash-card-header">
+            <h2 class="dash-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+              </svg>
+              <span>Upcoming appointments</span>
+            </h2>
+            <span class="dash-card-action">Next 3 visits</span>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" th:if="${#lists.isEmpty(dashboard.upcomingAppointments)}">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+            </svg>
+            <div class="empty-state-title">No upcoming appointments</div>
+            <div class="empty-state-desc">Schedule doctor consultations, routine checkups, and vaccination appointments here.</div>
+            <button type="button" class="btn btn-primary" onclick="alert('Appointment booking is coming in the next update.');">Book appointment</button>
+          </div>
+
+          <!-- Appointment List -->
+          <div class="appt-list" th:unless="${#lists.isEmpty(dashboard.upcomingAppointments)}">
+            <div th:each="appt : ${dashboard.upcomingAppointments}" class="appt-item">
+              <div class="appt-date-badge">
+                <span class="appt-month" th:text="${appt.monthShort}">NOV</span>
+                <span class="appt-day" th:text="${appt.dayNumber}">25</span>
+              </div>
+              <div class="appt-details">
+                <div class="appt-doc" th:text="${appt.doctorName}">Dr. Sarah Jenkins</div>
+                <div class="appt-specialty-time">
+                  <span th:text="${appt.specialty}">Cardiology</span>
+                  <span>•</span>
+                  <span th:text="${appt.timeFormatted}">10:30 AM</span>
+                </div>
+              </div>
+              <div class="appt-meta">
+                <div class="appt-relative" th:text="${appt.relativeTime}">in 2 days</div>
+                <div class="appt-patient" th:text="${appt.memberName}">Member</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 7: Vitals Overview (6 Columns) -->
+        <div class="dash-card col-6" id="vitals-section">
+          <div class="dash-card-header">
+            <h2 class="dash-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+              <span>Vitals overview</span>
+            </h2>
+            <span class="dash-card-action">Last 7 readings</span>
+          </div>
+
+          <!-- Tabs: BP | Glucose | Heart rate | SpO2 -->
+          <div class="vitals-tabs" role="tablist" aria-label="Vital Measurement Types">
+            <button type="button" class="vitals-tab-btn is-active" role="tab" aria-selected="true" data-target="vital-bp" id="tab-bp" aria-controls="vital-bp">Blood pressure</button>
+            <button type="button" class="vitals-tab-btn" role="tab" aria-selected="false" data-target="vital-glucose" id="tab-glucose" aria-controls="vital-glucose">Glucose</button>
+            <button type="button" class="vitals-tab-btn" role="tab" aria-selected="false" data-target="vital-heart" id="tab-heart" aria-controls="vital-heart">Heart rate</button>
+            <button type="button" class="vitals-tab-btn" role="tab" aria-selected="false" data-target="vital-spo2" id="tab-spo2" aria-controls="vital-spo2">SpO2</button>
+          </div>
+
+          <!-- Tab Panel 1: Blood Pressure -->
+          <div id="vital-bp" class="vital-panel is-active" role="tabpanel" aria-labelledby="tab-bp">
+            <div class="vital-display-row">
+              <div>
+                <span class="vital-big-value" th:text="${dashboard.vitals['BP'] != null ? dashboard.vitals['BP'].latestValue : '--'}">120/80</span>
+                <span class="vital-unit" th:text="${dashboard.vitals['BP'] != null ? dashboard.vitals['BP'].unit : 'mmHg'}">mmHg</span>
+              </div>
+              <div>
+                <span class="status-chip"
+                      th:classappend="${dashboard.vitals['BP'] != null ? (dashboard.vitals['BP'].status == 'HIGH' ? 'high' : (dashboard.vitals['BP'].status == 'ELEVATED' ? 'elevated' : 'normal')) : 'no-data'}"
+                      th:text="${dashboard.vitals['BP'] != null and dashboard.vitals['BP'].status != 'NO_DATA' ? dashboard.vitals['BP'].status : 'No data'}">
+                  Normal
+                </span>
+              </div>
+            </div>
+            <div class="vitals-chart-container"
+                 th:attr="data-readings=${dashboard.vitals['BP'] != null ? #strings.toString(dashboard.vitals['BP'].readings) : '[]'}">
+              <!-- Inline SVG rendered by dashboard.js -->
+            </div>
+          </div>
+
+          <!-- Tab Panel 2: Glucose -->
+          <div id="vital-glucose" class="vital-panel" role="tabpanel" aria-labelledby="tab-glucose">
+            <div class="vital-display-row">
+              <div>
+                <span class="vital-big-value" th:text="${dashboard.vitals['GLUCOSE'] != null ? dashboard.vitals['GLUCOSE'].latestValue : '--'}">98</span>
+                <span class="vital-unit" th:text="${dashboard.vitals['GLUCOSE'] != null ? dashboard.vitals['GLUCOSE'].unit : 'mg/dL'}">mg/dL</span>
+              </div>
+              <div>
+                <span class="status-chip"
+                      th:classappend="${dashboard.vitals['GLUCOSE'] != null ? (dashboard.vitals['GLUCOSE'].status == 'HIGH' ? 'high' : (dashboard.vitals['GLUCOSE'].status == 'ELEVATED' ? 'elevated' : 'normal')) : 'no-data'}"
+                      th:text="${dashboard.vitals['GLUCOSE'] != null and dashboard.vitals['GLUCOSE'].status != 'NO_DATA' ? dashboard.vitals['GLUCOSE'].status : 'No data'}">
+                  Normal
+                </span>
+              </div>
+            </div>
+            <div class="vitals-chart-container"
+                 th:attr="data-readings=${dashboard.vitals['GLUCOSE'] != null ? #strings.toString(dashboard.vitals['GLUCOSE'].readings) : '[]'}">
+              <!-- Inline SVG rendered by dashboard.js -->
+            </div>
+          </div>
+
+          <!-- Tab Panel 3: Heart Rate -->
+          <div id="vital-heart" class="vital-panel" role="tabpanel" aria-labelledby="tab-heart">
+            <div class="vital-display-row">
+              <div>
+                <span class="vital-big-value" th:text="${dashboard.vitals['HEART_RATE'] != null ? dashboard.vitals['HEART_RATE'].latestValue : '--'}">72</span>
+                <span class="vital-unit" th:text="${dashboard.vitals['HEART_RATE'] != null ? dashboard.vitals['HEART_RATE'].unit : 'bpm'}">bpm</span>
+              </div>
+              <div>
+                <span class="status-chip"
+                      th:classappend="${dashboard.vitals['HEART_RATE'] != null ? (dashboard.vitals['HEART_RATE'].status == 'HIGH' ? 'high' : (dashboard.vitals['HEART_RATE'].status == 'ELEVATED' ? 'elevated' : 'normal')) : 'no-data'}"
+                      th:text="${dashboard.vitals['HEART_RATE'] != null and dashboard.vitals['HEART_RATE'].status != 'NO_DATA' ? dashboard.vitals['HEART_RATE'].status : 'No data'}">
+                  Normal
+                </span>
+              </div>
+            </div>
+            <div class="vitals-chart-container"
+                 th:attr="data-readings=${dashboard.vitals['HEART_RATE'] != null ? #strings.toString(dashboard.vitals['HEART_RATE'].readings) : '[]'}">
+              <!-- Inline SVG rendered by dashboard.js -->
+            </div>
+          </div>
+
+          <!-- Tab Panel 4: SpO2 -->
+          <div id="vital-spo2" class="vital-panel" role="tabpanel" aria-labelledby="tab-spo2">
+            <div class="vital-display-row">
+              <div>
+                <span class="vital-big-value" th:text="${dashboard.vitals['SPO2'] != null ? dashboard.vitals['SPO2'].latestValue : '--'}">99</span>
+                <span class="vital-unit" th:text="${dashboard.vitals['SPO2'] != null ? dashboard.vitals['SPO2'].unit : '%'}">%</span>
+              </div>
+              <div>
+                <span class="status-chip"
+                      th:classappend="${dashboard.vitals['SPO2'] != null ? (dashboard.vitals['SPO2'].status == 'HIGH' ? 'high' : (dashboard.vitals['SPO2'].status == 'ELEVATED' ? 'elevated' : 'normal')) : 'no-data'}"
+                      th:text="${dashboard.vitals['SPO2'] != null and dashboard.vitals['SPO2'].status != 'NO_DATA' ? dashboard.vitals['SPO2'].status : 'No data'}">
+                  Normal
+                </span>
+              </div>
+            </div>
+            <div class="vitals-chart-container"
+                 th:attr="data-readings=${dashboard.vitals['SPO2'] != null ? #strings.toString(dashboard.vitals['SPO2'].readings) : '[]'}">
+              <!-- Inline SVG rendered by dashboard.js -->
+            </div>
+          </div>
+
+          <div class="vitals-disclaimer">For tracking only, not medical advice.</div>
+        </div>
+      </section>
+
+      <!-- Row: Quick Actions (7 cols) & Emergency SOS Card (5 cols) -->
+      <section class="dash-grid" id="emergency-section" aria-label="Quick Actions and Emergency Help">
+        <!-- Section 8: Quick Actions Card (7 Columns) -->
+        <div class="dash-card col-7">
+          <div class="dash-card-header">
+            <h2 class="dash-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <span>Quick actions</span>
+            </h2>
+          </div>
+
+          <div class="quick-actions-grid">
+            <button type="button" class="action-btn" onclick="alert('Add medicine dialog is coming in the next update.');">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/>
+              </svg>
+              <span>Add medicine</span>
+            </button>
+
+            <button type="button" class="action-btn" onclick="alert('Book appointment dialog is coming in the next update.');">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+              </svg>
+              <span>Book visit</span>
+            </button>
+
+            <button type="button" class="action-btn" onclick="alert('Log vitals dialog is coming in the next update.');">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+              <span>Log vitals</span>
+            </button>
+
+            <button type="button" class="action-btn" onclick="alert('Add member dialog is coming in the next update.');">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+              </svg>
+              <span>Add member</span>
+            </button>
+
+            <!-- Disabled Prescription Scan Action with "Coming soon" -->
+            <button type="button" class="action-btn" disabled aria-disabled="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <line x1="9" y1="3" x2="9" y2="21"/>
+              </svg>
+              <span>Scan Rx</span>
+              <span class="action-soon-tag">Coming soon</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 9: Emergency SOS Card (Glass, uses --emergency-grad ONLY here) (5 Columns) -->
+        <div class="dash-card card-emergency col-5">
+          <div class="dash-card-header">
+            <h2 class="dash-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <span>Emergency assistance</span>
+            </h2>
+          </div>
+
+          <div class="sos-content">
+            <div class="sos-lead">Instantly alert emergency responders and share your family health context.</div>
+            <button type="button" class="btn-sos" id="trigger-sos-btn" aria-label="Activate Emergency SOS Assistance">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              </svg>
+              <span>Send SOS</span>
+            </button>
+            <div class="sos-subnote">SMS to contacts is not enabled yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 10: Recent Activity (12 Columns) -->
+      <section class="dash-grid" aria-label="Recent Account and Health Activity">
+        <div class="dash-card col-12">
+          <div class="dash-card-header">
+            <h2 class="dash-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 14 14"/>
+              </svg>
+              <span>Recent activity</span>
+            </h2>
+            <span class="dash-card-action">Latest events</span>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" th:if="${#lists.isEmpty(dashboard.recentActivities)}">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <div class="empty-state-title">No recent activity</div>
+            <div class="empty-state-desc">When you take medications, log health vitals, or schedule visits, your events will be documented here.</div>
+          </div>
+
+          <!-- Activity List -->
+          <div class="activity-list" th:unless="${#lists.isEmpty(dashboard.recentActivities)}">
+            <div th:each="act : ${dashboard.recentActivities}" class="activity-item">
+              <div class="activity-icon" aria-hidden="true">
+                <!-- Icon based on type -->
+                <svg th:if="${act.type == 'MEDICINE'}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/>
+                </svg>
+                <svg th:if="${act.type == 'VITAL'}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                <svg th:if="${act.type == 'APPOINTMENT'}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                </svg>
+                <svg th:if="${act.type != 'MEDICINE' and act.type != 'VITAL' and act.type != 'APPOINTMENT'}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+              </div>
+
+              <div class="activity-details">
+                <div class="activity-title" th:text="${act.title}">Event title</div>
+                <div class="activity-sub" th:text="${act.subtitle}">for Member</div>
+              </div>
+
+              <div class="activity-time" th:text="${act.timeAgo}">10 mins ago</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </th:block>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- Standard Landing Page Head Fragment -->
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="FamilyCare - A calm, private family health management platform to coordinate medicines, appointments, health records, and emergency alerts.">
+
+  <title th:text="${title != null ? title + ' | FamilyCare' : 'FamilyCare'}">FamilyCare</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Inline no-flash theme script (copied from comment at top of theme.js) -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('familycare-theme');
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        if (t) document.documentElement.setAttribute('data-theme', t);
+        if (localStorage.getItem('familycare-senior') === 'true') document.documentElement.classList.add('senior');
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" th:href="@{/css/theme.css}">
+  <link rel="stylesheet" th:href="@{/css/home.css}">
+  <!-- CSRF Meta Tags -->
+  <meta th:name="_csrf" th:content="${_csrf.token}" th:if="${_csrf != null}"/>
+  <meta th:name="_csrf_header" th:content="${_csrf.headerName}" th:if="${_csrf != null}"/>
+</head>
+
+<!-- Authentication Pages Head Fragment -->
+<head th:fragment="authHead(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content="FamilyCare - Secure, calm family healthcare authentication.">
+
+  <title th:text="${title != null ? title + ' | FamilyCare' : 'FamilyCare'}">FamilyCare</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Inline no-flash theme script -->
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('familycare-theme');
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        if (t) document.documentElement.setAttribute('data-theme', t);
+        if (localStorage.getItem('familycare-senior') === 'true') document.documentElement.classList.add('senior');
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" th:href="@{/css/theme.css}">
+  <link rel="stylesheet" th:href="@{/css/auth.css}">
+  <!-- CSRF Meta Tags -->
+  <meta th:name="_csrf" th:content="${_csrf.token}" th:if="${_csrf != null}"/>
+  <meta th:name="_csrf_header" th:content="${_csrf.headerName}" th:if="${_csrf != null}"/>
+</head>
+<body>
+</body>
+</html>
